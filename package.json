@@ -2,9 +2,9 @@
   "name": "projectflow",
   "version": "1.0.0",
   "description": "ProjectFlow - A project and task management system",
-  "main": "server/startup.js",
+  "main": "server/index.js",
   "scripts": {
-    "start": "cd server && node startup.js",
+    "start": "cd server && node index.js",
     "dev": "cd client && npm start",
     "dev:server": "cd server && npm run dev",
     "build": "cd client && npm run build"
