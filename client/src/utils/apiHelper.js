@@ -4,11 +4,17 @@
  * @returns {string} The full URL to use for API calls
  */
 export const getApiUrl = (endpoint) => {
-  if (process.env.NODE_ENV === 'development') {
+  // Use REACT_APP_API_BASE_URL if available (for production)
+  const apiBaseUrl = process.env.REACT_APP_API_BASE_URL;
+  
+  if (apiBaseUrl && apiBaseUrl !== 'YOUR_DEPLOYED_BACKEND_URL') {
+    // In production with a configured backend URL
+    return `${apiBaseUrl}${endpoint}`;
+  } else if (process.env.NODE_ENV === 'development') {
     // In development, prepend the backend URL directly to bypass proxy issues
     return `http://localhost:5000${endpoint}`;
   } else {
-    // In production, use relative URLs (will be handled by proxy or same origin)
+    // Fallback for production without configured backend URL
     return endpoint;
   }
 };

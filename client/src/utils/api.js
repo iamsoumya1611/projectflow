@@ -26,13 +26,25 @@ const apiFetchWrapper = async (endpoint, options = {}) => {
     // Log the response for debugging
     console.log('API Response:', { endpoint, status: response.status, statusText: response.statusText });
     
-    const data = await response.json();
-    
-    if (!response.ok) {
-      throw new Error(data.msg || 'API request failed');
+    // Check if response has content before trying to parse as JSON
+    const contentType = response.headers.get('content-type');
+    if (contentType && contentType.includes('application/json')) {
+      const data = await response.json();
+      
+      if (!response.ok) {
+        throw new Error(data.msg || 'API request failed');
+      }
+      
+      return { data, response };
+    } else {
+      // Handle non-JSON responses (like HTML error pages)
+      const text = await response.text();
+      if (!response.ok) {
+        throw new Error(`API request failed with status ${response.status}: ${text}`);
+      }
+      // Return text content for non-JSON responses
+      return { data: { text }, response };
     }
-    
-    return { data, response };
   } catch (error) {
     console.error('API Error:', { endpoint, error });
     throw error;
