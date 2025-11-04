@@ -8,7 +8,8 @@
     "dev": "nodemon server.js",
     "verify": "node scripts/verifyDeployment.js",
     "test-direct": "node test-direct-import.js",
-    "minimal": "node minimal-server.js"
+    "minimal": "node minimal-server.js",
+    "test-entry": "node test-entry-point.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
