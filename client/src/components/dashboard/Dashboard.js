@@ -17,7 +17,7 @@ const Dashboard = () => {
         const token = localStorage.getItem('token');
         
         // Fetch dashboard analytics
-        const analyticsRes = await apiFetch('/api/analytics/dashboard', {
+        const analyticsRes = await apiFetch('/analytics/dashboard', {
           headers: {
             'x-auth-token': token
           }
@@ -31,7 +31,7 @@ const Dashboard = () => {
         }
         
         // Fetch user-specific tasks
-        const tasksRes = await apiFetch('/api/tasks', {
+        const tasksRes = await apiFetch('/tasks', {
           headers: {
             'x-auth-token': token
           }

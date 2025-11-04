@@ -24,8 +24,8 @@ import AdminProjects from './components/admin/AdminProjects';
 
 function App() {
   return (
-    <AuthProvider>
-      <Router>
+    <Router>
+      <AuthProvider>
         <div className="App">
           <Navbar />
           <main>
@@ -59,8 +59,8 @@ function App() {
           </main>
           <Footer />
         </div>
-      </Router>
-    </AuthProvider>
+      </AuthProvider>
+    </Router>
   );
 }
 

@@ -15,13 +15,10 @@ const NotificationButton = () => {
   const socketRef = useRef(null);
 
   useEffect(() => {
-    // Fetch initial unread count
     const fetchUnreadCount = async () => {
-      if (!user || !user.id) return;
-      
       try {
         const token = localStorage.getItem('token');
-        const response = await apiFetch('/api/messages/unread', {
+        const response = await apiFetch('/messages/unread', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',
