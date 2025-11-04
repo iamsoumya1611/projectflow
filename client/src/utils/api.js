@@ -1,7 +1,15 @@
 // Generic API fetch function
 const apiFetch = async (endpoint, options = {}) => {
-  // Use relative URLs to ensure proxy works correctly
-  const url = endpoint;
+  // Construct full URL based on environment
+  let url;
+  
+  if (process.env.NODE_ENV === 'development') {
+    // In development, prepend the backend URL directly to bypass proxy issues
+    url = `http://localhost:5000${endpoint}`;
+  } else {
+    // In production, use relative URLs (will be handled by proxy or same origin)
+    url = endpoint;
+  }
   
   // Log the request for debugging
   console.log('API Request:', { url, options });
