@@ -1,6 +1,7 @@
 import React, { useState, useContext } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
+import { authAPI } from '../../utils/api';
 
 const Register = () => {
   const [formData, setFormData] = useState({
@@ -62,47 +63,35 @@ const Register = () => {
     setLoading(true);
     
     try {
-      const res = await fetch('/api/users/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({ name, email, password })
-      });
+      const { data } = await authAPI.register({ name, email, password });
       
-      const data = await res.json();
+      // Login the user
+      const loginSuccess = await login(data.token);
       
-      if (res.ok) {
-        // Login the user
-        const loginSuccess = await login(data.token);
-        
-        if (loginSuccess) {
-          // Check if user is admin and redirect accordingly
-          const token = localStorage.getItem('token');
-          if (token) {
-            try {
-              const decoded = JSON.parse(atob(token.split('.')[1]));
-              if (decoded.user.role === 'admin') {
-                navigate('/admin/dashboard');
-              } else {
-                navigate('/dashboard');
-              }
-            } catch (err) {
-              console.error('Error decoding token:', err);
+      if (loginSuccess) {
+        // Check if user is admin and redirect accordingly
+        const token = localStorage.getItem('token');
+        if (token) {
+          try {
+            const decoded = JSON.parse(atob(token.split('.')[1]));
+            if (decoded.user.role === 'admin') {
+              navigate('/admin/dashboard');
+            } else {
               navigate('/dashboard');
             }
-          } else {
+          } catch (err) {
+            console.error('Error decoding token:', err);
             navigate('/dashboard');
           }
         } else {
-          setErrors({ general: 'Registration failed. Please try again.' });
+          navigate('/dashboard');
         }
       } else {
-        setErrors({ general: data.msg || data.errors?.[0]?.msg || 'Registration failed' });
+        setErrors({ general: 'Registration failed. Please try again.' });
       }
     } catch (err) {
       console.error(err);
-      setErrors({ general: 'Server error. Please try again.' });
+      setErrors({ general: err.message || 'Registration failed' });
     } finally {
       setLoading(false);
     }
