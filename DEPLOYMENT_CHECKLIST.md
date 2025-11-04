@@ -42,7 +42,7 @@
 - [ ] Check that sensitive data is not logged
 - [ ] Review and update JWT token expiration settings
 - [ ] Resolve npm peer dependency conflicts (especially Cloudinary versions)
-- [ ] Verify vercel.json output directory configuration
+- [ ] Verify vercel.json output directory configuration (should include `"outputDirectory": "build"`)
 
 ## Monitoring and Maintenance
 
