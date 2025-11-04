@@ -1,11 +1,10 @@
-import config from './config';
-
 // Generic API fetch function
 const apiFetch = async (endpoint, options = {}) => {
-  // When using proxy in development, we can use relative paths
-  // In production, we use the full API base URL
-  const baseUrl = config.API_BASE_URL || '';
-  const url = baseUrl + endpoint;
+  // Use relative URLs to ensure proxy works correctly
+  const url = endpoint;
+  
+  // Log the request for debugging
+  console.log('API Request:', { url, options });
   
   const defaultOptions = {
     headers: {
@@ -24,6 +23,10 @@ const apiFetch = async (endpoint, options = {}) => {
   
   try {
     const response = await fetch(url, mergedOptions);
+    
+    // Log the response for debugging
+    console.log('API Response:', { url, status: response.status, statusText: response.statusText });
+    
     const data = await response.json();
     
     if (!response.ok) {
@@ -32,6 +35,7 @@ const apiFetch = async (endpoint, options = {}) => {
     
     return { data, response };
   } catch (error) {
+    console.error('API Error:', { url, error });
     throw error;
   }
 };
