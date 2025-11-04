@@ -1,19 +1,15 @@
 {
-  "name": "project-management-tool",
+  "name": "projectflow",
   "version": "1.0.0",
-  "description": "A modern project management tool built with MERN stack",
-  "main": "server/server.js",
+  "description": "ProjectFlow - A project and task management system",
+  "main": "deploy.js",
   "scripts": {
-    "start": "nodemon server/server.js",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "server": "nodemon server/server.js",
-    "client": "npm start --prefix client",
-    "build": "npm run build --prefix client"
+    "start": "node deploy.js",
+    "dev": "cd client && npm start",
+    "dev:server": "cd server && npm run dev",
+    "build": "cd client && npm run build"
   },
-  "dependencies": {
-    "@tailwindcss/line-clamp": "^0.4.4",
-    "concurrently": "^7.6.0",
-    "express": "^5.1.0",
-    "nodemon": "^3.1.10"
+  "engines": {
+    "node": ">=14.0.0"
   }
 }
