@@ -4,9 +4,10 @@
   "description": "Backend for project management tool",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node render-deploy.js",
     "dev": "nodemon server.js",
-    "verify": "node scripts/verifyDeployment.js"
+    "verify": "node scripts/verifyDeployment.js",
+    "test-install": "node test-install.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

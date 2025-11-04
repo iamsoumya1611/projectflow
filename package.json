@@ -13,6 +13,7 @@
   "dependencies": {
     "@tailwindcss/line-clamp": "^0.4.4",
     "concurrently": "^7.6.0",
+    "express": "^5.1.0",
     "nodemon": "^3.1.10"
   }
 }
