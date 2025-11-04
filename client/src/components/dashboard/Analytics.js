@@ -13,8 +13,8 @@ import {
   LineElement
 } from 'chart.js';
 import Spinner from '../layout/Spinner';
+import { apiFetch } from '../../utils/apiHelper';
 
-// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -28,11 +28,10 @@ ChartJS.register(
 );
 
 const Analytics = () => {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [analytics, setAnalytics] = useState(null);
+  const [analytics, setAnalytics] = useState({});
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [timeRange, setTimeRange] = useState('all');
+  const [timeRange, setTimeRange] = useState('month');
 
   useEffect(() => {
     fetchAnalytics();
@@ -42,7 +41,7 @@ const Analytics = () => {
     try {
       setLoading(true);
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/analytics/dashboard`, {
+      const res = await apiFetch(`/api/analytics/dashboard`, {
         headers: {
           'x-auth-token': token
         }

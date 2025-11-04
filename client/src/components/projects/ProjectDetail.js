@@ -1,20 +1,19 @@
-import React, { useState, useEffect, useContext } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
-import { AuthContext } from '../../context/authContext';
-import Spinner from '../layout/Spinner';
 import TaskItem from '../tasks/TaskItem';
+import Spinner from '../layout/Spinner';
+import { apiFetch } from '../../utils/apiHelper';
 
 const ProjectDetail = () => {
   const { id } = useParams();
-  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
   
   const [project, setProject] = useState(null);
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [commentLoading, setCommentLoading] = useState(false);
   const [error, setError] = useState('');
   const [newComment, setNewComment] = useState('');
-  const [commentLoading, setCommentLoading] = useState(false);
 
   useEffect(() => {
     fetchProject();
@@ -24,7 +23,7 @@ const ProjectDetail = () => {
   const fetchProject = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/projects/${id}`, {
+      const res = await apiFetch(`/api/projects/${id}`, {
         headers: {
           'x-auth-token': token
         }
@@ -47,7 +46,7 @@ const ProjectDetail = () => {
   const fetchTasks = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/tasks/project/${id}`, {
+      const res = await apiFetch(`/api/tasks/project/${id}`, {
         headers: {
           'x-auth-token': token
         }
@@ -73,7 +72,7 @@ const ProjectDetail = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/projects/${id}/comment`, {
+      const res = await apiFetch(`/api/projects/${id}/comment`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -105,7 +104,7 @@ const ProjectDetail = () => {
     if (window.confirm('Are you sure you want to delete this comment?')) {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`/api/projects/${id}/comment/${commentId}`, {
+        const res = await apiFetch(`/api/projects/${id}/comment/${commentId}`, {
           method: 'DELETE',
           headers: {
             'x-auth-token': token

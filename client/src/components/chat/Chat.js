@@ -1,18 +1,35 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
 import { AuthContext } from '../../context/authContext';
-import { useNavigate } from 'react-router-dom';
+import { apiFetch } from '../../utils/apiHelper';
 import io from 'socket.io-client';
 
-let socket;
-
 const Chat = () => {
-  const { user } = useContext(AuthContext);
-  const navigate = useNavigate();
   const [messages, setMessages] = useState([]);
   const [message, setMessage] = useState('');
+  const { user } = useContext(AuthContext);
   const messagesEndRef = useRef(null);
+  const socketRef = useRef(null);
 
   useEffect(() => {
+    // Fetch initial messages
+    const fetchMessages = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await apiFetch('/api/messages', {
+          headers: {
+            'x-auth-token': token
+          }
+        });
+        const data = await res.json();
+
+        if (res.ok) {
+          setMessages(data.reverse()); // Show newest first
+        }
+      } catch (err) {
+        console.error('Error fetching messages:', err);
+      }
+    };
+
     // Redirect to login if user is not authenticated
     if (!user) {
       navigate('/login');
@@ -21,7 +38,7 @@ const Chat = () => {
 
     // Initialize socket connection
     const socketUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-    socket = io(socketUrl, {
+    socketRef.current = io(socketUrl, {
       transports: ['websocket'],
       withCredentials: true,
       reconnection: true,
@@ -30,10 +47,10 @@ const Chat = () => {
     });
 
     // Join global chat room
-    socket.emit('joinGlobalChat');
+    socketRef.current.emit('joinGlobalChat');
 
     // Listen for new messages
-    socket.on('messageReceived', (message) => {
+    socketRef.current.on('messageReceived', (message) => {
       // Ensure message has required properties
       if (message && message.text) {
         // Add default user if missing
@@ -53,8 +70,8 @@ const Chat = () => {
 
     // Clean up on unmount
     return () => {
-      if (socket) {
-        socket.disconnect();
+      if (socketRef.current) {
+        socketRef.current.disconnect();
       }
     };
   }, [user, navigate]);
@@ -65,24 +82,6 @@ const Chat = () => {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-  };
-
-  const fetchMessages = async () => {
-    try {
-      const token = localStorage.getItem('token');
-      const res = await fetch('/api/messages', {
-        headers: {
-          'x-auth-token': token
-        }
-      });
-      const data = await res.json();
-
-      if (res.ok) {
-        setMessages(data.reverse()); // Show newest first
-      }
-    } catch (err) {
-      console.error('Error fetching messages:', err);
-    }
   };
 
   const handleSubmit = async (e) => {
@@ -98,7 +97,7 @@ const Chat = () => {
     try {
       // Always send message through API to ensure persistence
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/messages', {
+      const res = await apiFetch('/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

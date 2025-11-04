@@ -1,14 +1,15 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { useState, useEffect, useContext } from 'react';
 import { Link } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
+import { apiFetch } from '../../utils/apiHelper';
 import Spinner from '../layout/Spinner';
 
 const Dashboard = () => {
-  const { user } = useContext(AuthContext);
-  const [analytics, setAnalytics] = useState(null);
+  const [analytics, setAnalytics] = useState({});
   const [userTasks, setUserTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const { user } = useContext(AuthContext);
 
   useEffect(() => {
     const fetchData = async () => {
@@ -16,7 +17,7 @@ const Dashboard = () => {
         const token = localStorage.getItem('token');
         
         // Fetch dashboard analytics
-        const analyticsRes = await fetch('/api/analytics/dashboard', {
+        const analyticsRes = await apiFetch('/api/analytics/dashboard', {
           headers: {
             'x-auth-token': token
           }
@@ -30,7 +31,7 @@ const Dashboard = () => {
         }
         
         // Fetch user-specific tasks
-        const tasksRes = await fetch('/api/tasks', {
+        const tasksRes = await apiFetch('/api/tasks', {
           headers: {
             'x-auth-token': token
           }

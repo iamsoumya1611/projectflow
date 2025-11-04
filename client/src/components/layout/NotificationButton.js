@@ -1,23 +1,47 @@
-import React, { useState, useEffect, useRef } from 'react';
-import io from 'socket.io-client';
+import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { decryptMessage } from '../../utils/encryption';
+import { AuthContext } from '../../context/authContext';
+import { apiFetch } from '../../utils/apiHelper';
+import io from 'socket.io-client';
 
-let socket;
-
-const NotificationButton = ({ user }) => {
+const NotificationButton = () => {
   const [unreadCount, setUnreadCount] = useState(0);
   const [notifications, setNotifications] = useState([]);
   const [showNotifications, setShowNotifications] = useState(false);
-  const notificationRef = useRef(null);
+  const { user } = useContext(AuthContext);
   const navigate = useNavigate();
+  const notificationRef = useRef(null);
+  const socketRef = useRef(null);
 
   useEffect(() => {
+    // Fetch initial unread count
+    const fetchUnreadCount = async () => {
+      if (!user || !user.id) return;
+      
+      try {
+        const token = localStorage.getItem('token');
+        const response = await apiFetch('/api/messages/unread', {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            'x-auth-token': token
+          }
+        });
+        
+        if (response.ok) {
+          const data = await response.json();
+          setUnreadCount(data.count);
+        }
+      } catch (err) {
+        console.error('Error fetching unread count:', err);
+      }
+    };
+
     // Only initialize if user exists
     if (user && user.id) {
       // Initialize socket connection
       const socketUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
-      socket = io(socketUrl, {
+      socketRef.current = io(socketUrl, {
         transports: ['websocket'],
         withCredentials: true,
         reconnection: true,
@@ -26,10 +50,10 @@ const NotificationButton = ({ user }) => {
       });
       
       // Join user-specific room for notifications
-      socket.emit('joinUserRoom', user.id);
+      socketRef.current.emit('joinUserRoom', user.id);
       
       // Listen for new notifications
-      socket.on('messageReceived', (data) => {
+      socketRef.current.on('messageReceived', (data) => {
         // Decrypt message if it's encrypted
         let decryptedText = data.text;
         if (data.isEncrypted && data.encryptedText) {
@@ -49,7 +73,6 @@ const NotificationButton = ({ user }) => {
         setNotifications(prev => [notification, ...prev].slice(0, 10)); // Keep only last 10 notifications
       });
       
-      // Fetch initial unread count
       fetchUnreadCount();
       
       // Set up interval to periodically check for new messages
@@ -66,37 +89,14 @@ const NotificationButton = ({ user }) => {
       
       // Cleanup on component unmount
       return () => {
-        if (socket) {
-          socket.disconnect();
+        if (socketRef.current) {
+          socketRef.current.disconnect();
         }
         clearInterval(interval);
         document.removeEventListener('mousedown', handleClickOutside);
       };
     }
   }, [user]); // Add user as dependency
-
-  const fetchUnreadCount = async () => {
-    // Only fetch if user exists
-    if (!user || !user.id) return;
-    
-    try {
-      const token = localStorage.getItem('token');
-      const response = await fetch('/api/messages/unread', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'x-auth-token': token
-        }
-      });
-      
-      if (response.ok) {
-        const data = await response.json();
-        setUnreadCount(data.count);
-      }
-    } catch (err) {
-      console.error('Error fetching unread count:', err);
-    }
-  };
 
   const handleNotificationClick = () => {
     setUnreadCount(0);

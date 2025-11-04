@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { apiFetch } from '../../utils/apiHelper';
 
 const AdminTaskForm = () => {
   const [formData, setFormData] = useState({
@@ -34,7 +35,7 @@ const AdminTaskForm = () => {
         };
 
         // Fetch projects
-        const projectsRes = await fetch('/api/admin/projects', {
+        const projectsRes = await apiFetch('/api/admin/projects', {
           headers
         });
         
@@ -44,7 +45,7 @@ const AdminTaskForm = () => {
         }
 
         // Fetch users
-        const usersRes = await fetch('/api/users', {
+        const usersRes = await apiFetch('/api/users', {
           headers
         });
         
@@ -62,7 +63,7 @@ const AdminTaskForm = () => {
         setIsEditing(true);
         try {
           const token = localStorage.getItem('token');
-          const res = await fetch(`/api/admin/tasks/${id}`, {
+          const res = await apiFetch(`/api/admin/tasks/${id}`, {
             headers: {
               'Content-Type': 'application/json',
               'x-auth-token': token
@@ -119,7 +120,7 @@ const AdminTaskForm = () => {
     if (window.confirm('Are you sure you want to delete this attachment?')) {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`/api/admin/tasks/${id}/attachments/${attachmentId}`, {
+        const res = await apiFetch(`/api/admin/tasks/${id}/attachments/${attachmentId}`, {
           method: 'DELETE',
           headers: {
             'x-auth-token': token
@@ -149,7 +150,7 @@ const AdminTaskForm = () => {
       
       // For new tasks, send as JSON
       if (!isEditing) {
-        const res = await fetch(url, {
+        const res = await apiFetch(url, {
           method,
           headers: {
             'Content-Type': 'application/json',
@@ -167,7 +168,7 @@ const AdminTaskForm = () => {
       } else {
         // For existing tasks, we need to handle both form data and file uploads
         // First update the task details
-        const taskRes = await fetch(url, {
+        const taskRes = await apiFetch(url, {
           method,
           headers: {
             'Content-Type': 'application/json',
@@ -189,7 +190,7 @@ const AdminTaskForm = () => {
             formDataObj.append('attachments', file);
           });
           
-          const attachmentRes = await fetch(`/api/admin/tasks/${id}/attachments`, {
+          const attachmentRes = await apiFetch(`/api/admin/tasks/${id}/attachments`, {
             method: 'POST',
             headers: {
               'x-auth-token': token

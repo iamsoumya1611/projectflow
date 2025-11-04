@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { apiFetch } from '../../utils/apiHelper';
 
 const AdminDashboard = () => {
   const [users, setUsers] = useState([]);
@@ -18,21 +19,21 @@ const AdminDashboard = () => {
         };
 
         // Fetch users
-        const usersRes = await fetch('/api/admin/users', {
+        const usersRes = await apiFetch('/api/admin/users', {
           headers
         });
         const usersData = await usersRes.json();
         setUsers(usersData);
 
         // Fetch projects
-        const projectsRes = await fetch('/api/admin/projects', {
+        const projectsRes = await apiFetch('/api/admin/projects', {
           headers
         });
         const projectsData = await projectsRes.json();
         setProjects(projectsData);
 
         // Fetch tasks
-        const tasksRes = await fetch('/api/admin/tasks', {
+        const tasksRes = await apiFetch('/api/admin/tasks', {
           headers
         });
         const tasksData = await tasksRes.json();
@@ -52,7 +53,7 @@ const AdminDashboard = () => {
     if (window.confirm('Are you sure you want to delete this user? This will also delete all their projects and tasks.')) {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`/api/admin/users/${userId}`, {
+        const res = await apiFetch(`/api/admin/users/${userId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -77,7 +78,7 @@ const AdminDashboard = () => {
     if (window.confirm('Are you sure you want to delete this project? This will also delete all associated tasks.')) {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`/api/admin/projects/${projectId}`, {
+        const res = await apiFetch(`/api/admin/projects/${projectId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -102,7 +103,7 @@ const AdminDashboard = () => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`/api/admin/tasks/${taskId}`, {
+        const res = await apiFetch(`/api/admin/tasks/${taskId}`, {
           method: 'DELETE',
           headers: {
             'Content-Type': 'application/json',
@@ -126,7 +127,7 @@ const AdminDashboard = () => {
   const handleUserRoleChange = async (userId, newRole) => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/admin/users/${userId}/role`, {
+      const res = await apiFetch(`/api/admin/users/${userId}/role`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

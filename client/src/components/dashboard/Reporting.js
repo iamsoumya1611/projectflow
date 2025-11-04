@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import Spinner from '../layout/Spinner';
 import { Bar, Pie, Line } from 'react-chartjs-2';
 import {
   Chart as ChartJS,
@@ -13,8 +12,9 @@ import {
   PointElement,
   LineElement
 } from 'chart.js';
+import Spinner from '../layout/Spinner';
+import { apiFetch } from '../../utils/apiHelper';
 
-// Register Chart.js components
 ChartJS.register(
   CategoryScale,
   LinearScale,
@@ -28,11 +28,14 @@ ChartJS.register(
 );
 
 const Reporting = () => {
-  const [activeTab, setActiveTab] = useState('overview');
-  const [analytics, setAnalytics] = useState(null);
+  const [analytics, setAnalytics] = useState({
+    dashboard: {},
+    projects: {},
+    tasks: {}
+  });
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [timeRange, setTimeRange] = useState('monthly');
+  const [timeRange, setTimeRange] = useState('month');
 
   useEffect(() => {
     fetchAnalytics();
@@ -43,7 +46,7 @@ const Reporting = () => {
       const token = localStorage.getItem('token');
       
       // Fetch dashboard analytics
-      const dashboardRes = await fetch('/api/analytics/dashboard', {
+      const dashboardRes = await apiFetch('/api/analytics/dashboard', {
         headers: {
           'x-auth-token': token
         }
@@ -51,7 +54,7 @@ const Reporting = () => {
       const dashboardData = await dashboardRes.json();
       
       // Fetch project analytics
-      const projectsRes = await fetch('/api/analytics/projects', {
+      const projectsRes = await apiFetch('/api/analytics/projects', {
         headers: {
           'x-auth-token': token
         }
@@ -59,7 +62,7 @@ const Reporting = () => {
       const projectsData = await projectsRes.json();
       
       // Fetch task analytics
-      const tasksRes = await fetch('/api/analytics/tasks', {
+      const tasksRes = await apiFetch('/api/analytics/tasks', {
         headers: {
           'x-auth-token': token
         }

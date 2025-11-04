@@ -1,24 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import Spinner from '../layout/Spinner';
+import { apiFetch } from '../../utils/apiHelper';
 
 const GanttChart = () => {
   const [projects, setProjects] = useState([]);
   const [tasks, setTasks] = useState([]);
+  const [expandedProjects, setExpandedProjects] = useState(new Set());
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const [expandedProjects, setExpandedProjects] = useState(new Set());
-  const [timeRange, setTimeRange] = useState('all'); // 'all', 'month', 'quarter', 'year'
+  const [timeRange, setTimeRange] = useState('all');
 
   useEffect(() => {
-    fetchProjectsAndTasks();
+    fetchData();
   }, []);
 
-  const fetchProjectsAndTasks = async () => {
+  const fetchData = async () => {
     try {
       const token = localStorage.getItem('token');
       
       // Fetch projects
-      const projectsRes = await fetch('/api/projects', {
+      const projectsRes = await apiFetch('/api/projects', {
         headers: {
           'x-auth-token': token
         }
@@ -26,7 +27,7 @@ const GanttChart = () => {
       const projectsData = await projectsRes.json();
       
       // Fetch tasks
-      const tasksRes = await fetch('/api/tasks', {
+      const tasksRes = await apiFetch('/api/tasks', {
         headers: {
           'x-auth-token': token
         }

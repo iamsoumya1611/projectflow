@@ -1,9 +1,8 @@
-import React, { useState, useEffect, useContext } from 'react';
-import { Link } from 'react-router-dom';
-import { AuthContext } from '../../context/authContext';
-import Spinner from '../layout/Spinner';
+import React, { useState, useEffect } from 'react';
 import ProjectItem from './ProjectItem';
 import ProjectForm from './ProjectForm';
+import Spinner from '../layout/Spinner';
+import { apiFetch } from '../../utils/apiHelper';
 
 const Projects = () => {
   const [projects, setProjects] = useState([]);
@@ -12,8 +11,6 @@ const Projects = () => {
   const [showForm, setShowForm] = useState(false);
   const [currentProject, setCurrentProject] = useState(null);
 
-  const { user } = useContext(AuthContext);
-
   useEffect(() => {
     fetchProjects();
   }, []);
@@ -21,7 +18,7 @@ const Projects = () => {
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/projects', {
+      const res = await apiFetch('/api/projects', {
         headers: {
           'x-auth-token': token
         }
@@ -55,7 +52,7 @@ const Projects = () => {
     if (window.confirm('Are you sure you want to delete this project?')) {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`/api/projects/${id}`, {
+        const res = await apiFetch(`/api/projects/${id}`, {
           method: 'DELETE',
           headers: {
             'x-auth-token': token

@@ -1,29 +1,30 @@
 import React, { useState, useEffect } from 'react';
 import { DragDropContext, Droppable, Draggable } from 'react-beautiful-dnd';
 import Spinner from '../layout/Spinner';
+import { apiFetch } from '../../utils/apiHelper';
 
 const KanbanBoard = () => {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
-  // Columns for the Kanban board
+  // Define columns for the Kanban board
   const columns = {
     todo: {
       name: 'To Do',
-      color: 'bg-gray-500'
+      color: 'bg-gray-600'
     },
     in_progress: {
       name: 'In Progress',
-      color: 'bg-blue-500'
+      color: 'bg-blue-600'
     },
     review: {
       name: 'Review',
-      color: 'bg-yellow-500'
+      color: 'bg-yellow-600'
     },
     done: {
       name: 'Done',
-      color: 'bg-green-500'
+      color: 'bg-green-600'
     }
   };
 
@@ -34,7 +35,7 @@ const KanbanBoard = () => {
   const fetchTasks = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/tasks', {
+      const res = await apiFetch('/api/tasks', {
         headers: {
           'x-auth-token': token
         }
@@ -88,7 +89,7 @@ const KanbanBoard = () => {
     // Update the task on the server
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch(`/api/tasks/${taskId}`, {
+      const res = await apiFetch(`/api/tasks/${taskId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',

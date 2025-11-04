@@ -1,44 +1,45 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { apiFetch } from '../../utils/apiHelper';
 
-const TaskForm = ({ task, projects, users, onSuccess, onCancel }) => {
-  const navigate = useNavigate();
-  const fileInputRef = useRef(null);
-  
+const TaskForm = ({ task, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
-    title: '',
-    description: '',
-    project: '',
-    assignee: 'self',
-    priority: 'medium',
-    status: 'todo',
-    startDate: '',
-    dueDate: '',
-    submissionStatus: 'not_submitted'
+    title: task?.title || '',
+    description: task?.description || '',
+    project: task?.project?._id || '',
+    status: task?.status || 'todo'
   });
+  
+  const [projects, setProjects] = useState([]);
   const [files, setFiles] = useState([]);
-  const [errors, setErrors] = useState({});
   const [loading, setLoading] = useState(false);
+  const [errors, setErrors] = useState({});
+  const fileInputRef = useRef(null);
 
   useEffect(() => {
-    if (task) {
-      setFormData({
-        title: task.title || '',
-        description: task.description || '',
-        project: task.project?._id || '',
-        assignee: task.assignee?._id || 'self',
-        priority: task.priority || 'medium',
-        status: task.status || 'todo',
-        startDate: task.startDate ? new Date(task.startDate).toISOString().split('T')[0] : '',
-        dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : '',
-        submissionStatus: task.submissionStatus || 'not_submitted'
-      });
-    }
-  }, [task]);
+    const fetchProjects = async () => {
+      try {
+        const token = localStorage.getItem('token');
+        const res = await apiFetch('/api/projects', {
+          headers: {
+            'x-auth-token': token
+          }
+        });
+        
+        if (res.ok) {
+          const data = await res.json();
+          setProjects(data);
+        }
+      } catch (err) {
+        console.error('Error fetching projects:', err);
+      }
+    };
 
-  const { title, description, project, assignee, priority, status, startDate, dueDate, submissionStatus } = formData;
+    fetchProjects();
+  }, []);
 
-  const onChange = (e) => {
+  const { title, description, project, status } = formData;
+
+  const onChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     // Clear error when user starts typing
     if (errors[e.target.name]) {
@@ -48,7 +49,16 @@ const TaskForm = ({ task, projects, users, onSuccess, onCancel }) => {
 
   const handleFileChange = (e) => {
     const selectedFiles = Array.from(e.target.files);
+    // Limit to 5 files
+    if (selectedFiles.length > 5) {
+      setErrors({ files: 'You can only upload up to 5 files' });
+      return;
+    }
     setFiles(selectedFiles);
+    // Clear file error when user selects files
+    if (errors.files) {
+      setErrors({ ...errors, files: '' });
+    }
   };
 
   const removeFile = (index) => {
@@ -59,95 +69,46 @@ const TaskForm = ({ task, projects, users, onSuccess, onCancel }) => {
 
   const validateForm = () => {
     const newErrors = {};
-
+    
     if (!title.trim()) {
-      newErrors.title = 'Task title is required';
+      newErrors.title = 'Title is required';
     }
-
+    
+    if (!description.trim()) {
+      newErrors.description = 'Description is required';
+    }
+    
     if (!project) {
       newErrors.project = 'Project is required';
     }
-
-    // Convert string dates to Date objects for comparison
-    if (startDate && dueDate) {
-      const startDateObj = new Date(startDate);
-      const dueDateObj = new Date(dueDate);
-      
-      if (isNaN(startDateObj.getTime()) || isNaN(dueDateObj.getTime())) {
-        newErrors.startDate = 'Invalid date format';
-        newErrors.dueDate = 'Invalid date format';
-      } else if (startDateObj > dueDateObj) {
-        newErrors.dueDate = 'Due date must be after start date';
-      }
-    }
-
-    // Validate file uploads
-    if (files.length > 5) {
-      newErrors.files = 'You can only upload up to 5 files';
-    }
-
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
   const onSubmit = async (e) => {
     e.preventDefault();
-
+    
     if (!validateForm()) return;
-
+    
     setLoading(true);
-
+    
     try {
-      const url = task ? `/api/tasks/${task._id}` : '/api/tasks';
-      const method = task ? 'PUT' : 'POST';
-
-      // Handle assignee value properly
-      let assigneeValue = null;
-      if (assignee === 'self') {
-        assigneeValue = 'self';
-      } else if (assignee === 'unassigned') {
-        assigneeValue = 'unassigned';
-      } else if (assignee) {
-        assigneeValue = assignee;
-      }
-
-      // Create FormData for file uploads
       const formDataObj = new FormData();
       formDataObj.append('title', title);
       formDataObj.append('description', description);
       formDataObj.append('project', project);
-      formDataObj.append('assignee', assigneeValue);
-      formDataObj.append('priority', priority);
       formDataObj.append('status', status);
-      formDataObj.append('startDate', startDate);
-      formDataObj.append('dueDate', dueDate);
       
-      // For team members submitting progress, set submission status to submitted
-      const finalSubmissionStatus = task ? 'submitted' : submissionStatus;
-      formDataObj.append('submissionStatus', finalSubmissionStatus);
-      
-      // Add user property for task creation
-      if (!task) {
-        const token = localStorage.getItem('token');
-        const userRes = await fetch('/api/auth/me', {
-          headers: {
-            'x-auth-token': token
-          }
-        });
-        
-        if (userRes.ok) {
-          const userData = await userRes.json();
-          formDataObj.append('user', userData.id);
-        }
-      }
-
-      // Add files to formData
       files.forEach(file => {
         formDataObj.append('attachments', file);
       });
 
       const token = localStorage.getItem('token');
-      const res = await fetch(url, {
+      const url = task ? `/api/tasks/${task._id}` : '/api/tasks';
+      const method = task ? 'PUT' : 'POST';
+      
+      const res = await apiFetch(url, {
         method,
         headers: {
           'x-auth-token': token
@@ -160,7 +121,7 @@ const TaskForm = ({ task, projects, users, onSuccess, onCancel }) => {
       if (res.ok) {
         // If this is a progress submission (existing task), also update submission status
         if (task) {
-          await fetch(`/api/tasks/${task._id}/submission`, {
+          await apiFetch(`/api/tasks/${task._id}/submission`, {
             method: 'PUT',
             headers: {
               'Content-Type': 'application/json',

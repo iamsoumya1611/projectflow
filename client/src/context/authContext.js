@@ -1,5 +1,6 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { isAuthenticated, getUserId, getUserRole } from '../utils/auth';
+import { apiFetch } from '../utils/apiHelper';
 
 // Create AuthContext
 export const AuthContext = createContext();
@@ -15,7 +16,7 @@ export const AuthProvider = ({ children }) => {
       if (isAuthenticated()) {
         try {
           const token = localStorage.getItem('token');
-          const res = await fetch('/api/users/profile', {
+          const res = await apiFetch('/api/users/profile', {
             headers: {
               'x-auth-token': token
             }
@@ -51,7 +52,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token', token);
     
     try {
-      const res = await fetch('/api/users/profile', {
+      const res = await apiFetch('/api/users/profile', {
         headers: {
           'x-auth-token': token
         }

@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import Spinner from '../layout/Spinner';
+import { apiFetch } from '../../utils/apiHelper';
 
 const AdminTasks = () => {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
-  const navigate = useNavigate();
-
-  // Filter states
   const [filters, setFilters] = useState({
     status: 'all',
     priority: 'all',
@@ -27,7 +26,7 @@ const AdminTasks = () => {
   const fetchAdminTasks = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/admin/tasks', {
+      const res = await apiFetch('/api/admin/tasks', {
         headers: {
           'x-auth-token': token
         }
@@ -42,7 +41,7 @@ const AdminTasks = () => {
             const attachmentsWithUsers = await Promise.all(task.attachments.map(async (attachment) => {
               if (attachment.uploadedBy) {
                 try {
-                  const userRes = await fetch(`/api/users/${attachment.uploadedBy}`, {
+                  const userRes = await apiFetch(`/api/users/${attachment.uploadedBy}`, {
                     headers: {
                       'x-auth-token': token
                     }
@@ -76,7 +75,7 @@ const AdminTasks = () => {
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/admin/projects', {
+      const res = await apiFetch('/api/admin/projects', {
         headers: {
           'x-auth-token': token
         }
@@ -96,7 +95,7 @@ const AdminTasks = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/users', {
+      const res = await apiFetch('/api/users', {
         headers: {
           'x-auth-token': token
         }
@@ -117,7 +116,7 @@ const AdminTasks = () => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`/api/admin/tasks/${id}`, {
+        const res = await apiFetch(`/api/admin/tasks/${id}`, {
           method: 'DELETE',
           headers: {
             'x-auth-token': token
@@ -141,7 +140,7 @@ const AdminTasks = () => {
     if (window.confirm('Are you sure you want to delete this attachment?')) {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`/api/admin/tasks/${taskId}/attachments/${attachmentId}`, {
+        const res = await apiFetch(`/api/admin/tasks/${taskId}/attachments/${attachmentId}`, {
           method: 'DELETE',
           headers: {
             'x-auth-token': token

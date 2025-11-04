@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { apiFetch } from '../../utils/apiHelper';
 
 const UserList = ({ onUserSelect }) => {
   const [users, setUsers] = useState([]);
@@ -9,7 +10,7 @@ const UserList = ({ onUserSelect }) => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('/api/users', {
+        const res = await apiFetch('/api/users', {
           headers: {
             'x-auth-token': token
           }

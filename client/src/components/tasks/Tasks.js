@@ -1,11 +1,16 @@
 import React, { useState, useEffect, useContext } from 'react';
-import { Link, useSearchParams } from 'react-router-dom';
-import { AuthContext } from '../../context/authContext';
-import Spinner from '../layout/Spinner';
+import { useLocation, useParams } from 'react-router-dom';
 import TaskItem from './TaskItem';
 import TaskForm from './TaskForm';
+import Spinner from '../layout/Spinner';
+import { AuthContext } from '../../context/authContext';
+import { apiFetch } from '../../utils/apiHelper';
 
 const Tasks = () => {
+  const { user } = useContext(AuthContext);
+  const location = useLocation();
+  const { id: projectId } = useParams();
+  
   const [tasks, setTasks] = useState([]);
   const [projects, setProjects] = useState([]);
   const [users, setUsers] = useState([]);
@@ -13,20 +18,12 @@ const Tasks = () => {
   const [error, setError] = useState('');
   const [showForm, setShowForm] = useState(false);
   const [currentTask, setCurrentTask] = useState(null);
-  const [searchParams] = useSearchParams();
-
-  const { user } = useContext(AuthContext);
-
-  // Filter states
   const [filters, setFilters] = useState({
     assignment: 'all',
     status: 'all',
     priority: 'all',
     project: 'all'
   });
-
-  // Get project ID from URL params if provided
-  const projectId = searchParams.get('project');
 
   useEffect(() => {
     fetchTasks();
@@ -37,7 +34,7 @@ const Tasks = () => {
   const fetchTasks = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/tasks', {
+      const res = await apiFetch('/api/tasks', {
         headers: {
           'x-auth-token': token
         }
@@ -60,7 +57,7 @@ const Tasks = () => {
   const fetchProjects = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/projects', {
+      const res = await apiFetch('/api/projects', {
         headers: {
           'x-auth-token': token
         }
@@ -80,7 +77,7 @@ const Tasks = () => {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem('token');
-      const res = await fetch('/api/users', {
+      const res = await apiFetch('/api/users', {
         headers: {
           'x-auth-token': token
         }
@@ -111,7 +108,7 @@ const Tasks = () => {
     if (window.confirm('Are you sure you want to delete this task?')) {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`/api/tasks/${id}`, {
+        const res = await apiFetch(`/api/tasks/${id}`, {
           method: 'DELETE',
           headers: {
             'x-auth-token': token

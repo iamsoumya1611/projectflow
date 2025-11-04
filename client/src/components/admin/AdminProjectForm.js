@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { apiFetch } from '../../utils/apiHelper';
 
 const AdminProjectForm = () => {
   const [formData, setFormData] = useState({
@@ -26,7 +27,7 @@ const AdminProjectForm = () => {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch('/api/users', {
+        const res = await apiFetch('/api/users', {
           headers: {
             'Content-Type': 'application/json',
             'x-auth-token': token
@@ -47,7 +48,7 @@ const AdminProjectForm = () => {
         setIsEditing(true);
         try {
           const token = localStorage.getItem('token');
-          const res = await fetch(`/api/admin/projects/${id}`, {
+          const res = await apiFetch(`/api/admin/projects/${id}`, {
             headers: {
               'Content-Type': 'application/json',
               'x-auth-token': token
@@ -103,7 +104,7 @@ const AdminProjectForm = () => {
     if (window.confirm('Are you sure you want to delete this attachment?')) {
       try {
         const token = localStorage.getItem('token');
-        const res = await fetch(`/api/admin/projects/${id}/attachments/${attachmentId}`, {
+        const res = await apiFetch(`/api/admin/projects/${id}/attachments/${attachmentId}`, {
           method: 'DELETE',
           headers: {
             'x-auth-token': token
@@ -128,12 +129,12 @@ const AdminProjectForm = () => {
     
     try {
       const token = localStorage.getItem('token');
-      const url = isEditing ? `/api/admin/projects/${id}` : '/api/admin/projects';
+      const url = `/api/admin/projects/${id}`;
       const method = isEditing ? 'PUT' : 'POST';
       
       // For new projects, send as JSON
       if (!isEditing) {
-        const res = await fetch(url, {
+        const res = await apiFetch('/api/admin/projects', {
           method,
           headers: {
             'Content-Type': 'application/json',
@@ -151,7 +152,7 @@ const AdminProjectForm = () => {
       } else {
         // For existing projects, we need to handle both form data and file uploads
         // First update the project details
-        const projectRes = await fetch(url, {
+        const projectRes = await apiFetch(url, {
           method,
           headers: {
             'Content-Type': 'application/json',
@@ -173,7 +174,7 @@ const AdminProjectForm = () => {
             formDataObj.append('attachments', file);
           });
           
-          const attachmentRes = await fetch(`/api/admin/projects/${id}/attachments`, {
+          const attachmentRes = await apiFetch(`/api/admin/projects/${id}/attachments`, {
             method: 'POST',
             headers: {
               'x-auth-token': token

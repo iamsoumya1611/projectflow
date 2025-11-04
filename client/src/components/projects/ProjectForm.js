@@ -1,33 +1,22 @@
 import React, { useState, useEffect } from 'react';
+import { apiFetch } from '../../utils/apiHelper';
 
 const ProjectForm = ({ project, onSuccess, onCancel }) => {
   const [formData, setFormData] = useState({
-    name: '',
-    description: '',
-    startDate: '',
-    endDate: '',
-    priority: 'medium',
-    status: 'not_started'
+    name: project?.name || '',
+    description: project?.description || '',
+    startDate: project?.startDate ? project.startDate.split('T')[0] : '',
+    endDate: project?.endDate ? project.endDate.split('T')[0] : '',
+    priority: project?.priority || 'medium',
+    status: project?.status || 'not_started'
   });
-  const [errors, setErrors] = useState({});
+  
   const [loading, setLoading] = useState(false);
-
-  useEffect(() => {
-    if (project) {
-      setFormData({
-        name: project.name || '',
-        description: project.description || '',
-        startDate: project.startDate ? new Date(project.startDate).toISOString().split('T')[0] : '',
-        endDate: project.endDate ? new Date(project.endDate).toISOString().split('T')[0] : '',
-        priority: project.priority || 'medium',
-        status: project.status || 'not_started'
-      });
-    }
-  }, [project]);
+  const [errors, setErrors] = useState({});
 
   const { name, description, startDate, endDate, priority, status } = formData;
 
-  const onChange = (e) => {
+  const onChange = e => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
     // Clear error when user starts typing
     if (errors[e.target.name]) {
@@ -37,53 +26,44 @@ const ProjectForm = ({ project, onSuccess, onCancel }) => {
 
   const validateForm = () => {
     const newErrors = {};
-
+    
     if (!name.trim()) {
       newErrors.name = 'Project name is required';
     }
-
+    
     if (!description.trim()) {
-      newErrors.description = 'Project description is required';
+      newErrors.description = 'Description is required';
     }
-
+    
     if (!startDate) {
       newErrors.startDate = 'Start date is required';
     }
-
+    
     if (!endDate) {
       newErrors.endDate = 'End date is required';
     }
-
-    // Convert string dates to Date objects for comparison
-    if (startDate && endDate) {
-      const startDateObj = new Date(startDate);
-      const endDateObj = new Date(endDate);
-      
-      if (isNaN(startDateObj.getTime()) || isNaN(endDateObj.getTime())) {
-        newErrors.startDate = 'Invalid date format';
-        newErrors.endDate = 'Invalid date format';
-      } else if (startDateObj > endDateObj) {
-        newErrors.endDate = 'End date must be after start date';
-      }
+    
+    if (startDate && endDate && new Date(startDate) > new Date(endDate)) {
+      newErrors.endDate = 'End date must be after start date';
     }
-
+    
     setErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
-  const onSubmit = async (e) => {
+  const onSubmit = async e => {
     e.preventDefault();
-
+    
     if (!validateForm()) return;
-
+    
     setLoading(true);
-
+    
     try {
       const url = project ? `/api/projects/${project._id}` : '/api/projects';
       const method = project ? 'PUT' : 'POST';
 
       const token = localStorage.getItem('token');
-      const res = await fetch(url, {
+      const res = await apiFetch(url, {
         method,
         headers: {
           'Content-Type': 'application/json',
