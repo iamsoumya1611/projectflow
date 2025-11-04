@@ -90,6 +90,7 @@ if (process.env.NODE_ENV === 'development') {
   - `cloudinary`: `^1.41.3`
   - `multer-storage-cloudinary`: `^4.0.0`
   - Add `legacy-peer-deps=true` to `.npmrc` files
+- If you see "No Output Directory named 'public' found", check your `vercel.json` configuration and ensure it points to the correct build directory (`client/build`)
 
 ## Additional Notes
 
