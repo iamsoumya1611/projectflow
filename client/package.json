@@ -27,6 +27,7 @@
     "verify-build": "node scripts/verifyBuild.js"
   },
   "homepage": ".",
+  "proxy": "http://localhost:5000",
   "eslintConfig": {
     "extends": [
       "react-app",

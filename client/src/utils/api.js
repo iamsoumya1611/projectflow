@@ -1,10 +1,11 @@
 import config from './config';
 
-const API_BASE_URL = config.API_BASE_URL;
-
 // Generic API fetch function
 const apiFetch = async (endpoint, options = {}) => {
-  const url = `${API_BASE_URL}${endpoint}`;
+  // When using proxy in development, we can use relative paths
+  // In production, we use the full API base URL
+  const baseUrl = config.API_BASE_URL || '';
+  const url = baseUrl + endpoint;
   
   const defaultOptions = {
     headers: {
@@ -38,14 +39,14 @@ const apiFetch = async (endpoint, options = {}) => {
 // Auth API functions
 export const authAPI = {
   login: async (credentials) => {
-    return apiFetch('/api/auth', {
+    return apiFetch('/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
   },
   
   register: async (userData) => {
-    return apiFetch('/api/users', {
+    return apiFetch('/users/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
@@ -55,7 +56,7 @@ export const authAPI = {
 // Project API functions
 export const projectAPI = {
   getAll: async (token) => {
-    return apiFetch('/api/projects', {
+    return apiFetch('/projects', {
       headers: {
         'x-auth-token': token,
       },
@@ -63,7 +64,7 @@ export const projectAPI = {
   },
   
   getById: async (id, token) => {
-    return apiFetch(`/api/projects/${id}`, {
+    return apiFetch(`/projects/${id}`, {
       headers: {
         'x-auth-token': token,
       },
@@ -71,7 +72,7 @@ export const projectAPI = {
   },
   
   create: async (projectData, token) => {
-    return apiFetch('/api/projects', {
+    return apiFetch('/projects', {
       method: 'POST',
       headers: {
         'x-auth-token': token,
@@ -81,7 +82,7 @@ export const projectAPI = {
   },
   
   update: async (id, projectData, token) => {
-    return apiFetch(`/api/projects/${id}`, {
+    return apiFetch(`/projects/${id}`, {
       method: 'PUT',
       headers: {
         'x-auth-token': token,
@@ -91,7 +92,7 @@ export const projectAPI = {
   },
   
   delete: async (id, token) => {
-    return apiFetch(`/api/projects/${id}`, {
+    return apiFetch(`/projects/${id}`, {
       method: 'DELETE',
       headers: {
         'x-auth-token': token,
@@ -103,7 +104,7 @@ export const projectAPI = {
 // Task API functions
 export const taskAPI = {
   getAll: async (token) => {
-    return apiFetch('/api/tasks', {
+    return apiFetch('/tasks', {
       headers: {
         'x-auth-token': token,
       },
@@ -111,7 +112,7 @@ export const taskAPI = {
   },
   
   getByProject: async (projectId, token) => {
-    return apiFetch(`/api/tasks/project/${projectId}`, {
+    return apiFetch(`/tasks/project/${projectId}`, {
       headers: {
         'x-auth-token': token,
       },
@@ -119,7 +120,7 @@ export const taskAPI = {
   },
   
   create: async (taskData, token) => {
-    return apiFetch('/api/tasks', {
+    return apiFetch('/tasks', {
       method: 'POST',
       headers: {
         'x-auth-token': token,
@@ -129,7 +130,7 @@ export const taskAPI = {
   },
   
   update: async (id, taskData, token) => {
-    return apiFetch(`/api/tasks/${id}`, {
+    return apiFetch(`/tasks/${id}`, {
       method: 'PUT',
       headers: {
         'x-auth-token': token,
@@ -139,7 +140,7 @@ export const taskAPI = {
   },
   
   delete: async (id, token) => {
-    return apiFetch(`/api/tasks/${id}`, {
+    return apiFetch(`/tasks/${id}`, {
       method: 'DELETE',
       headers: {
         'x-auth-token': token,

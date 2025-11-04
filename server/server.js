@@ -14,13 +14,11 @@ connectDB();
 // Init middleware
 app.use(express.json({ extended: false }));
 
-// Enable CORS for development
-if (process.env.NODE_ENV === 'development') {
-  app.use(cors({
-    origin: "*",
-    credentials: true
-  }));
-}
+// Enable CORS for all requests
+app.use(cors({
+  origin: process.env.NODE_ENV === 'production' ? 'https://projectflow.vercel.app' : "http://localhost:3000",
+  credentials: true
+}));
 
 // Serve static files from uploads directory
 app.use('/uploads', express.static('uploads'));
@@ -29,7 +27,7 @@ app.use('/uploads', express.static('uploads'));
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' ? 'https://yourdomain.com' : "*",
+    origin: process.env.NODE_ENV === 'production' ? 'https://projectflow-api.vercel.app/' : "*",
     methods: ["GET", "POST"],
     credentials: true
   },
@@ -46,15 +44,15 @@ app.get('/api/test', (req, res) => {
 });
 
 // Define routes
-app.use('/api/users', require('./routes/users'));
-app.use('/api/auth', require('./routes/auth'));
-app.use('/api/projects', require('./routes/projects'));
-app.use('/api/tasks', require('./routes/tasks'));
-app.use('/api/analytics', require('./routes/analytics'));
-app.use('/api/admin', require('./routes/admin'));
-app.use('/api/messages', require('./routes/messages'));
-app.use('/api/comments', require('./routes/comments'));
-app.use('/api/profile', require('./routes/profiles'));
+app.use('/users', require('./routes/users'));
+app.use('/auth', require('./routes/auth'));
+app.use('/projects', require('./routes/projects'));
+app.use('/tasks', require('./routes/tasks'));
+app.use('/analytics', require('./routes/analytics'));
+app.use('/admin', require('./routes/admin'));
+app.use('/messages', require('./routes/messages'));
+app.use('/comments', require('./routes/comments'));
+app.use('/profile', require('./routes/profiles'));
 
 // Socket.IO connection handling
 io.on('connection', (socket) => {
