@@ -41,6 +41,7 @@
 - [ ] Verify HTTPS is enabled for both frontend and backend
 - [ ] Check that sensitive data is not logged
 - [ ] Review and update JWT token expiration settings
+- [ ] Resolve npm peer dependency conflicts (especially Cloudinary versions)
 
 ## Monitoring and Maintenance
 

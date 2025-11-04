@@ -86,6 +86,10 @@ if (process.env.NODE_ENV === 'development') {
 - If you see "404" errors for API calls, check that your `REACT_APP_API_BASE_URL` is set correctly
 - If you see CORS errors, verify your backend CORS configuration
 - If the app fails to connect to the database, check your `MONGO_URI` environment variable
+- If you encounter npm peer dependency conflicts (especially with Cloudinary), ensure you're using compatible versions:
+  - `cloudinary`: `^1.41.3`
+  - `multer-storage-cloudinary`: `^4.0.0`
+  - Add `legacy-peer-deps=true` to `.npmrc` files
 
 ## Additional Notes
 
