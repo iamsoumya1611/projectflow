@@ -16,7 +16,9 @@ app.use(express.json({ extended: false }));
 
 // Enable CORS for all requests
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' ? 'https://projectflow.vercel.app' : "http://localhost:3000",
+  origin: process.env.NODE_ENV === 'production' 
+    ? ['https://projectflow.vercel.app', 'https://your-vercel-frontend-url.vercel.app'] 
+    : "http://localhost:3000",
   credentials: true
 }));
 
