@@ -4,10 +4,11 @@
   "description": "Backend for project management tool",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
+    "start": "node start.js",
     "dev": "nodemon server.js",
     "verify": "node scripts/verifyDeployment.js",
-    "postinstall": "echo 'Dependencies installed successfully'"
+    "prestart": "npm install",
+    "test-deps": "node testDependencies.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

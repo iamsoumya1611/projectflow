@@ -1,3 +1,14 @@
+// Add dependency check at the beginning
+try {
+  require('express');
+  require('cors');
+  require('mongoose');
+} catch (error) {
+  console.error('Missing required dependencies. Please run npm install');
+  console.error('Error:', error.message);
+  process.exit(1);
+}
+
 const express = require('express');
 const connectDB = require('./config/db');
 const path = require('path');
