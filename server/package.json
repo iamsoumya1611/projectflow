@@ -10,7 +10,8 @@
     "test-direct": "node test-direct-import.js",
     "minimal": "node minimal-server.js",
     "test-entry": "node test-entry-point.js",
-    "render": "node render.js"
+    "render": "node render.js",
+    "test-connection": "node test-connection.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",

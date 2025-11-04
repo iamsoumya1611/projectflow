@@ -11,8 +11,8 @@ export const getApiUrl = (endpoint) => {
     // In production with a configured backend URL
     return `${apiBaseUrl}${endpoint}`;
   } else if (process.env.NODE_ENV === 'development') {
-    // In development, prepend the backend URL directly to bypass proxy issues
-    return `http://localhost:5000${endpoint}`;
+    // In development, use relative URLs to leverage proxy
+    return endpoint;
   } else {
     // Fallback for production without configured backend URL
     return endpoint;
