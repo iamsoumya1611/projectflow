@@ -3,8 +3,8 @@ services:
     name: projectflow-api
     runtime: node
     plan: free
-    buildCommand: npm install
-    startCommand: npm start
+    buildCommand: cd server && npm ci
+    startCommand: cd server && node startup.js
     envVars:
       - key: NODE_ENV
         value: production

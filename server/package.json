@@ -2,12 +2,12 @@
   "name": "project-management-server",
   "version": "1.0.0",
   "description": "Backend for project management tool",
-  "main": "server.js",
+  "main": "startup.js",
   "scripts": {
-    "start": "node render-deploy.js",
+    "start": "node startup.js",
     "dev": "nodemon server.js",
     "verify": "node scripts/verifyDeployment.js",
-    "test-install": "node test-install.js"
+    "force-install": "node force-install.js"
   },
   "dependencies": {
     "bcryptjs": "^2.4.3",
