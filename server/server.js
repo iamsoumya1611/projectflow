@@ -1,3 +1,68 @@
+// Auto-install dependencies if they're missing
+(function() {
+  const fs = require('fs');
+  const path = require('path');
+  const { execSync } = require('child_process');
+  
+  console.log('=== Auto-dependency installation ===');
+  
+  // Function to check if a module can be required
+  function canRequire(moduleName) {
+    try {
+      require.resolve(moduleName);
+      return true;
+    } catch (err) {
+      return false;
+    }
+  }
+  
+  // Check if express can be required
+  if (!canRequire('express')) {
+    console.log('Express not found, attempting to install dependencies...');
+    
+    try {
+      // Check if package.json exists
+      const packageJsonPath = path.join(__dirname, 'package.json');
+      if (fs.existsSync(packageJsonPath)) {
+        console.log('package.json found, installing dependencies...');
+        
+        // Try npm ci first (faster)
+        try {
+          console.log('Running npm ci...');
+          execSync('npm ci', { stdio: 'inherit', cwd: __dirname });
+          console.log('Dependencies installed with npm ci');
+        } catch (ciError) {
+          console.warn('npm ci failed, trying npm install...');
+          try {
+            execSync('npm install', { stdio: 'inherit', cwd: __dirname });
+            console.log('Dependencies installed with npm install');
+          } catch (installError) {
+            console.error('Failed to install dependencies:', installError.message);
+            // Don't exit here, let's try to continue
+          }
+        }
+      } else {
+        console.error('package.json not found!');
+        // Don't exit here, let's try to continue
+      }
+    } catch (error) {
+      console.error('Error during dependency installation:', error.message);
+      // Don't exit here, let's try to continue
+    }
+  } else {
+    console.log('Express is already available');
+  }
+  
+  // Verify express can be imported after installation attempt
+  try {
+    require('express');
+    console.log('Express is now available');
+  } catch (err) {
+    console.error('Express is still not available after installation attempt');
+    // We'll let the original error occur below
+  }
+})();
+
 console.log('Loading server.js module...');
 
 const connectDB = require('./config/db');
@@ -214,6 +279,9 @@ function initializeServer() {
   }
 }
 
-// Export the initialization function
+// Initialize the server immediately
+initializeServer();
+
+// Export the initialization function for testing
 console.log('Server module loaded and exported');
 module.exports = { initializeServer };
