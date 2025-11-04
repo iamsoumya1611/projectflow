@@ -1,6 +1,6 @@
 /**
  * Constructs the full API URL based on the environment
- * @param {string} endpoint - The API endpoint (e.g., '/api/users/profile')
+ * @param {string} endpoint - The API endpoint (e.g., '/users/profile')
  * @returns {string} The full URL to use for API calls
  */
 export const getApiUrl = (endpoint) => {
@@ -15,7 +15,7 @@ export const getApiUrl = (endpoint) => {
 
 /**
  * Wrapper for fetch that automatically constructs the correct API URL
- * @param {string} endpoint - The API endpoint (e.g., '/api/users/profile')
+ * @param {string} endpoint - The API endpoint (e.g., '/users/profile')
  * @param {object} options - Fetch options
  * @returns {Promise} The fetch promise
  */

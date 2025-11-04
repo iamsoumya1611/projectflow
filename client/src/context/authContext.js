@@ -1,6 +1,7 @@
-import React, { createContext, useState, useEffect } from 'react';
-import { isAuthenticated, getUserId, getUserRole } from '../utils/auth';
+import React, { createContext, useState, useEffect, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { apiFetch } from '../utils/apiHelper';
+import { isAuthenticated as checkAuthStatus } from '../utils/auth';
 
 // Create AuthContext
 export const AuthContext = createContext();
@@ -9,14 +10,15 @@ export const AuthContext = createContext();
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
 
   // Check authentication status on app load
   useEffect(() => {
-    const checkAuthStatus = async () => {
-      if (isAuthenticated()) {
+    const checkAuth = async () => {
+      if (checkAuthStatus()) {
         try {
           const token = localStorage.getItem('token');
-          const res = await apiFetch('/api/users/profile', {
+          const res = await apiFetch('/users/profile', {
             headers: {
               'x-auth-token': token
             }
@@ -44,7 +46,7 @@ export const AuthProvider = ({ children }) => {
       setLoading(false);
     };
 
-    checkAuthStatus();
+    checkAuth();
   }, []);
 
   // Login function
@@ -52,7 +54,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token', token);
     
     try {
-      const res = await apiFetch('/api/users/profile', {
+      const res = await apiFetch('/users/profile', {
         headers: {
           'x-auth-token': token
         }
@@ -83,6 +85,7 @@ export const AuthProvider = ({ children }) => {
   const logout = () => {
     localStorage.removeItem('token');
     setUser(null);
+    navigate('/login');
   };
 
   // Context value
