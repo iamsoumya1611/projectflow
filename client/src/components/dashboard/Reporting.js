@@ -36,6 +36,7 @@ const Reporting = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [timeRange, setTimeRange] = useState('month');
+  const [activeTab, setActiveTab] = useState('overview');
 
   useEffect(() => {
     fetchAnalytics();

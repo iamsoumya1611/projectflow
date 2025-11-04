@@ -2,6 +2,7 @@ import React, { useState, useEffect, useRef, useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
 import { apiFetch } from '../../utils/apiHelper';
+import { decryptMessage } from '../../utils/encryption';
 import io from 'socket.io-client';
 
 const NotificationButton = () => {

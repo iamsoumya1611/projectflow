@@ -1,4 +1,5 @@
 import React, { useState, useEffect, useRef, useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AuthContext } from '../../context/authContext';
 import { apiFetch } from '../../utils/apiHelper';
 import io from 'socket.io-client';
@@ -9,6 +10,7 @@ const Chat = () => {
   const { user } = useContext(AuthContext);
   const messagesEndRef = useRef(null);
   const socketRef = useRef(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch initial messages
