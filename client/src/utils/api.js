@@ -54,14 +54,14 @@ const apiFetchWrapper = async (endpoint, options = {}) => {
 // Auth API functions
 export const authAPI = {
   login: async (credentials) => {
-    return apiFetchWrapper('/auth/login', {
+    return apiFetchWrapper('/api/auth/login', {
       method: 'POST',
       body: JSON.stringify(credentials),
     });
   },
   
   register: async (userData) => {
-    return apiFetchWrapper('/users/register', {
+    return apiFetchWrapper('/api/users/register', {
       method: 'POST',
       body: JSON.stringify(userData),
     });
@@ -71,7 +71,7 @@ export const authAPI = {
 // Project API functions
 export const projectAPI = {
   getAll: async (token) => {
-    return apiFetchWrapper('/projects', {
+    return apiFetchWrapper('/api/projects', {
       headers: {
         'x-auth-token': token,
       },
@@ -79,7 +79,7 @@ export const projectAPI = {
   },
   
   getById: async (id, token) => {
-    return apiFetchWrapper(`/projects/${id}`, {
+    return apiFetchWrapper(`/api/projects/${id}`, {
       headers: {
         'x-auth-token': token,
       },
@@ -87,7 +87,7 @@ export const projectAPI = {
   },
   
   create: async (projectData, token) => {
-    return apiFetchWrapper('/projects', {
+    return apiFetchWrapper('/api/projects', {
       method: 'POST',
       headers: {
         'x-auth-token': token,
@@ -97,7 +97,7 @@ export const projectAPI = {
   },
   
   update: async (id, projectData, token) => {
-    return apiFetchWrapper(`/projects/${id}`, {
+    return apiFetchWrapper(`/api/projects/${id}`, {
       method: 'PUT',
       headers: {
         'x-auth-token': token,
@@ -107,7 +107,7 @@ export const projectAPI = {
   },
   
   delete: async (id, token) => {
-    return apiFetchWrapper(`/projects/${id}`, {
+    return apiFetchWrapper(`/api/projects/${id}`, {
       method: 'DELETE',
       headers: {
         'x-auth-token': token,
@@ -119,7 +119,7 @@ export const projectAPI = {
 // Task API functions
 export const taskAPI = {
   getAll: async (token) => {
-    return apiFetchWrapper('/tasks', {
+    return apiFetchWrapper('/api/tasks', {
       headers: {
         'x-auth-token': token,
       },
@@ -127,7 +127,7 @@ export const taskAPI = {
   },
   
   getByProject: async (projectId, token) => {
-    return apiFetchWrapper(`/tasks/project/${projectId}`, {
+    return apiFetchWrapper(`/api/tasks/project/${projectId}`, {
       headers: {
         'x-auth-token': token,
       },
@@ -135,7 +135,7 @@ export const taskAPI = {
   },
   
   create: async (taskData, token) => {
-    return apiFetchWrapper('/tasks', {
+    return apiFetchWrapper('/api/tasks', {
       method: 'POST',
       headers: {
         'x-auth-token': token,
@@ -145,7 +145,7 @@ export const taskAPI = {
   },
   
   update: async (id, taskData, token) => {
-    return apiFetchWrapper(`/tasks/${id}`, {
+    return apiFetchWrapper(`/api/tasks/${id}`, {
       method: 'PUT',
       headers: {
         'x-auth-token': token,
@@ -155,7 +155,7 @@ export const taskAPI = {
   },
   
   delete: async (id, token) => {
-    return apiFetchWrapper(`/tasks/${id}`, {
+    return apiFetchWrapper(`/api/tasks/${id}`, {
       method: 'DELETE',
       headers: {
         'x-auth-token': token,
