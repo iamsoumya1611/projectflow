@@ -21,7 +21,7 @@ app.use(express.json({ extended: false }));
 // Enable CORS
 app.use(cors({
   origin: process.env.NODE_ENV === 'production' 
-    ? ['https://projectflow.vercel.app', 'https://your-vercel-frontend-url.vercel.app'] 
+    ? ['https://projectflow.vercel.app', 'https://projectflow-eosin.vercel.app'] 
     : "http://localhost:3000",
   credentials: true
 }));
@@ -33,7 +33,7 @@ app.use('/uploads', express.static('uploads'));
 const server = http.createServer(app);
 const io = socketIo(server, {
   cors: {
-    origin: process.env.NODE_ENV === 'production' ? 'https://projectflow-api.vercel.app/' : "*",
+    origin: process.env.NODE_ENV === 'production' ? ['https://projectflow.vercel.app', 'https://projectflow-eosin.vercel.app'] : "*",
     methods: ["GET", "POST"],
     credentials: true
   },

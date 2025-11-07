@@ -12,7 +12,7 @@
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "https://your-backend-service-url.com/api/$1"
+      "dest": "https://projectflow-api.vercel.app/api/$1"
     },
     {
       "src": "/(.*)",
