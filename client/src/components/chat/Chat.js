@@ -17,7 +17,7 @@ const Chat = () => {
     const fetchMessages = async () => {
       try {
         const token = localStorage.getItem('token');
-        const res = await apiFetch('/messages', {
+        const res = await apiFetch('/api/messages', {
           headers: {
             'x-auth-token': token
           }
@@ -99,7 +99,7 @@ const Chat = () => {
     try {
       // Always send message through API to ensure persistence
       const token = localStorage.getItem('token');
-      const res = await apiFetch('/messages', {
+      const res = await apiFetch('/api/messages', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

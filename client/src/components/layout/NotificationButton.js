@@ -18,7 +18,7 @@ const NotificationButton = () => {
     const fetchUnreadCount = async () => {
       try {
         const token = localStorage.getItem('token');
-        const response = await apiFetch('/messages/unread', {
+        const response = await apiFetch('/api/messages/unread', {
           method: 'GET',
           headers: {
             'Content-Type': 'application/json',

@@ -15,7 +15,7 @@ export const AuthProvider = ({ children }) => {
       const token = localStorage.getItem('token');
       if (token) {
         try {
-          const res = await apiFetch('/users/profile', {
+          const res = await apiFetch('/api/users/profile', {
             headers: {
               'x-auth-token': token
             }
@@ -47,7 +47,7 @@ export const AuthProvider = ({ children }) => {
     localStorage.setItem('token', token);
     
     try {
-      const res = await apiFetch('/users/profile', {
+      const res = await apiFetch('/api/users/profile', {
         headers: {
           'x-auth-token': token
         }
