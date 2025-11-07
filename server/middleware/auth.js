@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
+// Middleware to authenticate user tokens
 module.exports = function(req, res, next) {
   // Get token from header
   const token = req.header('x-auth-token');

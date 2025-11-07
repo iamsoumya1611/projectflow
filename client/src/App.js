@@ -3,11 +3,9 @@ import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { AuthProvider } from './context/authContext';
 import Navbar from './components/layout/Navbar';
 import Landing from './components/layout/Landing';
-import Footer from './components/layout/Footer';
 import Login from './components/auth/Login';
 import Register from './components/auth/Register';
 import Dashboard from './components/dashboard/Dashboard';
-import Analytics from './components/dashboard/Analytics';
 import Projects from './components/projects/Projects';
 import ProjectDetail from './components/projects/ProjectDetail';
 import Tasks from './components/tasks/Tasks';
@@ -34,7 +32,6 @@ function App() {
               <Route path="/login" element={<Login />} />
               <Route path="/register" element={<Register />} />
               <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/analytics" element={<Analytics />} />
               <Route path="/projects" element={<Projects />} />
               <Route path="/projects/:id" element={<ProjectDetail />} />
               <Route path="/projects/edit/:id" element={<ProjectDetail />} />
@@ -57,7 +54,6 @@ function App() {
               <Route path="/admin/chat" element={<Chat />} />
             </Routes>
           </main>
-          <Footer />
         </div>
       </AuthProvider>
     </Router>

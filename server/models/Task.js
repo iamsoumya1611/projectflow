@@ -1,7 +1,6 @@
-// Import Mongoose for MongoDB object modeling
 const mongoose = require('mongoose');
 
-// Define the Task schema - structure for task documents in MongoDB
+// Define the Task schema
 const taskSchema = new mongoose.Schema({
   // Task title - required field
   title: {
@@ -38,7 +37,6 @@ const taskSchema = new mongoose.Schema({
   reporter: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'User'
-    // Removed required: true to prevent validation issues
   },
   
   // Task status - can be one of the defined values, defaults to 'todo'
@@ -126,5 +124,5 @@ const taskSchema = new mongoose.Schema({
   }
 });
 
-// Create and export the Task model based on the schema
+// Create and export the Task model
 module.exports = mongoose.model('Task', taskSchema);

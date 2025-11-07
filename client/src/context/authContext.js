@@ -1,21 +1,20 @@
 import React, { createContext, useState, useEffect } from 'react';
 import { apiFetch } from '../utils/apiHelper';
-import { isAuthenticated as checkAuthStatus } from '../utils/auth';
 
 // Create AuthContext
 export const AuthContext = createContext();
 
-// AuthProvider component
+// Simplified AuthProvider component
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Check authentication status on app load
+  // Check if user is logged in when app loads
   useEffect(() => {
     const checkAuth = async () => {
-      if (checkAuthStatus()) {
+      const token = localStorage.getItem('token');
+      if (token) {
         try {
-          const token = localStorage.getItem('token');
           const res = await apiFetch('/users/profile', {
             headers: {
               'x-auth-token': token
@@ -30,16 +29,12 @@ export const AuthProvider = ({ children }) => {
               role: userData.role 
             });
           } else {
-            setUser(null);
             localStorage.removeItem('token');
           }
         } catch (err) {
           console.error('Error fetching user profile:', err);
-          setUser(null);
           localStorage.removeItem('token');
         }
-      } else {
-        setUser(null);
       }
       setLoading(false);
     };
@@ -67,13 +62,11 @@ export const AuthProvider = ({ children }) => {
         });
         return true;
       } else {
-        setUser(null);
         localStorage.removeItem('token');
         return false;
       }
     } catch (err) {
       console.error('Error fetching user profile:', err);
-      setUser(null);
       localStorage.removeItem('token');
       return false;
     }

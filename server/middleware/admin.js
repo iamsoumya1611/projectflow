@@ -2,6 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 require('dotenv').config();
 
+// Middleware to authenticate admin users
 module.exports = async function(req, res, next) {
   // Get token from header
   const token = req.header('x-auth-token');

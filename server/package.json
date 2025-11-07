@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node server.js",
     "dev": "nodemon server.js",
+    "simplified": "node simplified-server.js",
     "verify": "node scripts/verifyDeployment.js",
     "test-direct": "node test-direct-import.js",
     "minimal": "node minimal-server.js",

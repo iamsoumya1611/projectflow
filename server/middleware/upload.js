@@ -1,7 +1,7 @@
 const multer = require('multer');
 const { storage } = require('../config/cloudinary');
 
-// Configure multer for file uploads with error handling
+// Configure multer for file uploads
 const upload = multer({ 
   storage: storage,
   limits: {
@@ -10,9 +10,16 @@ const upload = multer({
   },
   fileFilter: (req, file, cb) => {
     // Allow only specific file types
-    const allowedTypes = ['image/jpeg', 'image/png', 'image/jpg', 'application/pdf', 
-                         'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-                         'application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'];
+    const allowedTypes = [
+      'image/jpeg', 
+      'image/png', 
+      'image/jpg', 
+      'application/pdf', 
+      'application/msword', 
+      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
+      'application/vnd.ms-excel', 
+      'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+    ];
     
     if (allowedTypes.includes(file.mimetype)) {
       cb(null, true);
