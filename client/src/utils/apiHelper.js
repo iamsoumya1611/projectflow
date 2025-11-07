@@ -9,7 +9,10 @@ export const getApiUrl = (endpoint) => {
   
   if (apiBaseUrl && apiBaseUrl !== 'YOUR_DEPLOYED_BACKEND_URL') {
     // In production with a configured backend URL
-    return `${apiBaseUrl}${endpoint}`;
+    // Ensure no double slashes by removing trailing slash from base URL and leading slash from endpoint
+    const baseUrl = apiBaseUrl.endsWith('/') ? apiBaseUrl.slice(0, -1) : apiBaseUrl;
+    const apiEndpoint = endpoint.startsWith('/') ? endpoint : '/' + endpoint;
+    return `${baseUrl}${apiEndpoint}`;
   } else if (process.env.NODE_ENV === 'development') {
     // In development, use relative URLs to leverage proxy
     return endpoint;
